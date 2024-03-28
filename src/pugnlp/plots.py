@@ -2,13 +2,34 @@
 # -*- coding: utf-8 -*-
 """Constants and discovered values, like path to current installation of pug-nlp."""
 from __future__ import division, print_function, absolute_import, unicode_literals
-from builtins import (bytes, dict, int, list, object, range, str,  # noqa
-    ascii, chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
+from builtins import (
+    bytes,
+    dict,
+    int,
+    list,
+    object,
+    range,
+    str,  # noqa
+    ascii,
+    chr,
+    hex,
+    input,
+    next,
+    oct,
+    open,
+    pow,
+    round,
+    super,
+    filter,
+    map,
+    zip,
+)
 import os
 import logging
 
 import matplotlib
-matplotlib.use('TkAgg')  # noqa
+
+matplotlib.use("TkAgg")  # noqa
 import seaborn as sb
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -24,7 +45,7 @@ from plotly import offline
 import plotly.graph_objs as go
 
 logger = logging.getLogger(__name__)
-np = pd.np
+import numpy as np
 
 
 #####################################################################################
@@ -34,7 +55,7 @@ np = pd.np
 
 def scatterplot(x, y):
     plt.ion()
-    plt.plot(x, y, 'b.')
+    plt.plot(x, y, "b.")
     plt.xlim(min(x) - 1, max(x) + 1)
     plt.ylim(min(y) - 1, max(y) + 1)
     plt.draw()
@@ -45,7 +66,7 @@ def barplot(labels, data):
     plt.ion()
     plt.xticks(pos + 0.4, labels)
     plt.bar(pos, data)
-    plt.grid('on')
+    plt.grid("on")
     # plt.draw()
 
 
@@ -55,13 +76,16 @@ def histplot(data, bins=None, nbins=5):
         space = (maxx - minx) / float(nbins)
         bins = np.arange(minx, maxx, space)
     binned = [bisect.bisect(bins, x) for x in data]
-    h = ['%.1g' % x for x in list(bins) + [maxx]] if space < 1 or space > 1000 else [
-        str(int(x)) for x in list(bins) + [maxx]]
+    h = (
+        ["%.1g" % x for x in list(bins) + [maxx]]
+        if space < 1 or space > 1000
+        else [str(int(x)) for x in list(bins) + [maxx]]
+    )
     print(h)
-    if len(str(h[1]) + '-' + h[2]) > 10:
+    if len(str(h[1]) + "-" + h[2]) > 10:
         displab = h[:-1]
     else:
-        displab = [x + '-\n ' + y for x, y in zip(h[:-1], h[1:])]
+        displab = [x + "-\n " + y for x, y in zip(h[:-1], h[1:])]
     barplot(displab, [binned.count(x + 1) for x in range(len(bins))])
 
 
@@ -96,7 +120,7 @@ def barchart(x, y, numbins=None):
 def piechart(labels, data):
     plt.ion()
     fig = plt.figure(figsize=(7, 7))
-    plt.pie(data, labels=labels, autopct='%1.2f%%')
+    plt.pie(data, labels=labels, autopct="%1.2f%%")
     plt.draw()
     return fig
 
@@ -236,12 +260,12 @@ def regressionplot(x, y, poly=None):
         plt.ion()
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        plt.plot(x, y_regression, 'r-', x, y, 'o', markersize=5)
-        plt.legend(['%+.2g * x + %.2g' % poly, 'Samples'])
+        plt.plot(x, y_regression, "r-", x, y, "o", markersize=5)
+        plt.legend(["%+.2g * x + %.2g" % poly, "Samples"])
         ax.grid(True)
         plt.draw()
     except:
-        logger.warn('No display available')
+        logger.warn("No display available")
     return y_regression
 
 
@@ -272,33 +296,48 @@ class ColorMap(object):
                 pass
 
         if not isinstance(mat, np.ndarray):
-            raise ValueError("Don't know how to display a ColorMap for a matrix of type {}".format(type(mat)))
+            raise ValueError(
+                "Don't know how to display a ColorMap for a matrix of type {}".format(
+                    type(mat)
+                )
+            )
 
-        kwargs['vmin'] = kwargs.get('vmin', np.amin(mat))
-        kwargs['vmax'] = kwargs.get('vmax', np.amax(mat))
-        kwargs['cmap'] = kwargs.get('cmap', 'bone')  # 'hot', 'greens', 'blues'
-        kwargs['linewidths'] = kwargs.get('linewidths', 0.25)
-        kwargs['square'] = kwargs.get('square', True)
+        kwargs["vmin"] = kwargs.get("vmin", np.amin(mat))
+        kwargs["vmax"] = kwargs.get("vmax", np.amax(mat))
+        kwargs["cmap"] = kwargs.get("cmap", "bone")  # 'hot', 'greens', 'blues'
+        kwargs["linewidths"] = kwargs.get("linewidths", 0.25)
+        kwargs["square"] = kwargs.get("square", True)
         sb.heatmap(mat, **kwargs)
 
     def show(self, block=False):
-        """ Display the last image drawn """
+        """Display the last image drawn"""
         try:
             plt.show(block=block)
         except ValueError:
             plt.show()
 
     def save(self, filename):
-        """ save colormap to file"""
-        plt.savefig(filename, fig=self.fig, facecolor='black', edgecolor='black')
+        """save colormap to file"""
+        plt.savefig(filename, fig=self.fig, facecolor="black", edgecolor="black")
 
 
-def scatmat(df, category=None, colors='rgob',
-            num_plots=4, num_topics=100, num_columns=4,
-            show=False, block=False, data_path=DATA_PATH, save=False, verbose=1):
+def scatmat(
+    df,
+    category=None,
+    colors="rgob",
+    num_plots=4,
+    num_topics=100,
+    num_columns=4,
+    show=False,
+    block=False,
+    data_path=DATA_PATH,
+    save=False,
+    verbose=1,
+):
     """Scatter plot with colored markers depending on the discrete values in a "category" column
 
-    FIXME: empty plots that dont go away, Plot and/save scatter matrix in groups of num_columns topics"""
+    FIXME: empty plots that dont go away, Plot and/save scatter matrix in groups of num_columns topics
+    """
     if category is None:
         category = list(df.columns)[-1]
     if isinstance(category, (str, bytes, int)) and category in df.columns:
@@ -306,16 +345,22 @@ def scatmat(df, category=None, colors='rgob',
     else:
         category = pd.Series(category)
 
-    suffix = '{}x{}'.format(*list(df.shape))
+    suffix = "{}x{}".format(*list(df.shape))
     # suffix = compose_suffix(len(df), num_topics, save)
     # save = bool(save)
     for i in range(min(num_plots * num_columns, num_topics) / num_plots):
-        scatter_matrix(df[df.columns[i * num_columns:(i + 1) * num_columns]],
-                       marker='+', c=[colors[int(x) % len(colors)] for x in category.values],
-                       figsize=(18, 12))
+        scatter_matrix(
+            df[df.columns[i * num_columns : (i + 1) * num_columns]],
+            marker="+",
+            c=[colors[int(x) % len(colors)] for x in category.values],
+            figsize=(18, 12),
+        )
     if save:
-        name = 'scatmat_topics_{}-{}.jpg'.format(i * num_columns, (i + 1) * num_columns) + suffix
-        plt.savefig(os.path.join(data_path, name + '.jpg'))
+        name = (
+            "scatmat_topics_{}-{}.jpg".format(i * num_columns, (i + 1) * num_columns)
+            + suffix
+        )
+        plt.savefig(os.path.join(data_path, name + ".jpg"))
     if show:
         if block:
             plt.show()
@@ -330,8 +375,10 @@ def point_cloud(df, columns=[0, 1, 2]):
         columns = list(df.columns)[:3]
 
     fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')  # noqa
-    Axes3D.scatter(*[df[columns[i]] for i in range(3)], zdir='z', s=20, c=None, depthshade=True)
+    ax = fig.add_subplot(111, projection="3d")  # noqa
+    Axes3D.scatter(
+        *[df[columns[i]] for i in range(3)], zdir="z", s=20, c=None, depthshade=True
+    )
     return ax
 
 
@@ -339,33 +386,31 @@ def plotly_scatter(df):
     trace1 = go.Scatter(
         x=[0, 1, 2],
         y=[1, 1, 1],
-        mode='lines+markers+text',
-        name='Lines, Markers and Text',
-        text=['Text A', 'Text B', 'Text C'],
-        textposition='top'
+        mode="lines+markers+text",
+        name="Lines, Markers and Text",
+        text=["Text A", "Text B", "Text C"],
+        textposition="top",
     )
     trace2 = go.Scatter(
         x=[0, 1, 2],
         y=[2, 2, 2],
-        mode='markers+text',
-        name='Markers and Text',
-        text=['Text D', 'Text E', 'Text F'],
-        textposition='bottom'
+        mode="markers+text",
+        name="Markers and Text",
+        text=["Text D", "Text E", "Text F"],
+        textposition="bottom",
     )
     trace3 = go.Scatter(
         x=[0, 1, 2],
         y=[3, 3, 3],
-        mode='lines+text',
-        name='Lines and Text',
-        text=['Text G', 'Text H', 'Text I'],
-        textposition='bottom'
+        mode="lines+text",
+        name="Lines and Text",
+        text=["Text G", "Text H", "Text I"],
+        textposition="bottom",
     )
     data = [trace1, trace2, trace3]
-    layout = go.Layout(
-        showlegend=False
-    )
+    layout = go.Layout(showlegend=False)
     fig = go.Figure(data=data, layout=layout)
-    plot_url = plt.plot(fig, filename='text-chart-basic')
+    plot_url = plt.plot(fig, filename="text-chart-basic")
     return plot_url
 
 
@@ -394,11 +439,17 @@ def mask2spans(mask, index=None):
     return spans
 
 
-def plotly_timeseries(df, mask=None, filename='plotly_timeseries.html'):
+def plotly_timeseries(df, mask=None, filename="plotly_timeseries.html"):
     spans = mask2spans(mask)
-    offline.plot(df.iplot(
-        asFigure=True, xTitle='Date-Time', yTitle='Monitor Value', kind='scatter', logy=True,
-        vspan=spans),
+    offline.plot(
+        df.iplot(
+            asFigure=True,
+            xTitle="Date-Time",
+            yTitle="Monitor Value",
+            kind="scatter",
+            logy=True,
+            vspan=spans,
+        ),
         filename=filename,
     )
     return df

@@ -3,15 +3,37 @@
 r"""table utils"""
 from __future__ import print_function, unicode_literals, division, absolute_import
 from future import standard_library
+
 standard_library.install_aliases()  # noqa
 from builtins import *  # noqa
 from past.builtins import basestring
 
 from future.utils import viewitems  # noqa
-from builtins import (bytes, dict, int, list, object, range, str, ascii, chr, hex, input,  # noqa
-    next, oct, open, pow, round, super, filter, map, zip)
+from builtins import (
+    bytes,
+    dict,
+    int,
+    list,
+    object,
+    range,
+    str,
+    ascii,
+    chr,
+    hex,
+    input,  # noqa
+    next,
+    oct,
+    open,
+    pow,
+    round,
+    super,
+    filter,
+    map,
+    zip,
+)
 
 import re
+
 # try:  # python 3.5+
 #    from io import StringIO
 #    from ConfigParser import ConfigParser
@@ -38,44 +60,105 @@ import pugnlp.regexes as rex
 # WARNING: many abbreviations are ambiguous!
 # munged table from @NasBanov: http://stackoverflow.com/a/4766400/623735
 TZ_OFFSET_ABBREV = [
-    [-12, 'Y'],
-    [-11, 'X', 'NUT', 'SST'],
-    [-10, 'W', 'CKT', 'HAST', 'HST', 'TAHT', 'TKT'],
-    [-9, 'V', 'AKST', 'GAMT', 'GIT', 'HADT', 'HNY'],
-    [-8, 'U', 'AKDT', 'CIST', 'HAY', 'HNP', 'PST', 'PT'],
-    [-7, 'T', 'HAP', 'HNR', 'MST', 'PDT'],
-    [-6, 'S', 'CST', 'EAST', 'GALT', 'HAR', 'HNC', 'MDT'],
-    [-5, 'R', 'CDT', 'COT', 'EASST', 'ECT', 'EST', 'ET', 'HAC', 'HNE', 'PET'],
-    [-4, 'Q', 'AST', 'BOT', 'CLT', 'COST', 'EDT', 'FKT', 'GYT', 'HAE', 'HNA', 'PYT'],
-    [-3, 'P', 'ADT', 'ART', 'BRT', 'CLST', 'FKST', 'GFT', 'HAA', 'PMST', 'PYST', 'SRT', 'UYT', 'WGT'],
-    [-2, 'O', 'BRST', 'FNT', 'PMDT', 'UYST', 'WGST'],
-    [-1, 'N', 'AZOT', 'CVT', 'EGT'],
-    [0, 'Z', 'EGST', 'GMT', 'UTC', 'WET', 'WT'],
-    [1, 'A', 'CET', 'DFT', 'WAT', 'WEDT', 'WEST'],
-    [2, 'B', 'CAT', 'CEDT', 'CEST', 'EET', 'SAST', 'WAST'],
-    [3, 'C', 'EAT', 'EEDT', 'EEST', 'IDT', 'MSK'],
-    [4, 'D', 'AMT', 'AZT', 'GET', 'GST', 'KUYT', 'MSD', 'MUT', 'RET', 'SAMT', 'SCT'],
-    [5, 'E', 'AMST', 'AQTT', 'AZST', 'HMT', 'MAWT', 'MVT', 'PKT', 'TFT', 'TJT', 'TMT', 'UZT', 'YEKT'],
-    [6, 'F', 'ALMT', 'BIOT', 'BTT', 'IOT', 'KGT', 'NOVT', 'OMST', 'YEKST'],
-    [7, 'G', 'CXT', 'DAVT', 'HOVT', 'ICT', 'KRAT', 'NOVST', 'OMSST', 'THA', 'WIB'],
-    [8, 'H', 'ACT', 'AWST', 'BDT', 'BNT', 'CAST', 'HKT', 'IRKT', 'KRAST', 'MYT', 'PHT', 'SGT', 'ULAT', 'WITA', 'WST'],
-    [9, 'I', 'AWDT', 'IRKST', 'JST', 'KST', 'PWT', 'TLT', 'WDT', 'WIT', 'YAKT'],
-    [10, 'K', 'AEST', 'ChST', 'PGT', 'VLAT', 'YAKST', 'YAPT'],
-    [11, 'L', 'AEDT', 'LHDT', 'MAGT', 'NCT', 'PONT', 'SBT', 'VLAST', 'VUT'],
-    [12, 'M', 'ANAST', 'ANAT', 'FJT', 'GILT', 'MAGST', 'MHT', 'NZST', 'PETST', 'PETT', 'TVT', 'WFT'],
-    [13, 'FJST', 'NZDT'],
-    [11.5, 'NFT'],
-    [10.5, 'ACDT', 'LHST'],
-    [9.5, 'ACST'],
-    [6.5, 'CCT', 'MMT'],
-    [5.75, 'NPT'],
-    [5.5, 'SLT'],
-    [4.5, 'AFT', 'IRDT'],
-    [3.5, 'IRST'],
-    [-2.5, 'HAT', 'NDT'],
-    [-3.5, 'HNT', 'NST', 'NT'],
-    [-4.5, 'HLV', 'VET'],
-    [-9.5, 'MART', 'MIT'],
+    [-12, "Y"],
+    [-11, "X", "NUT", "SST"],
+    [-10, "W", "CKT", "HAST", "HST", "TAHT", "TKT"],
+    [-9, "V", "AKST", "GAMT", "GIT", "HADT", "HNY"],
+    [-8, "U", "AKDT", "CIST", "HAY", "HNP", "PST", "PT"],
+    [-7, "T", "HAP", "HNR", "MST", "PDT"],
+    [-6, "S", "CST", "EAST", "GALT", "HAR", "HNC", "MDT"],
+    [-5, "R", "CDT", "COT", "EASST", "ECT", "EST", "ET", "HAC", "HNE", "PET"],
+    [-4, "Q", "AST", "BOT", "CLT", "COST", "EDT", "FKT", "GYT", "HAE", "HNA", "PYT"],
+    [
+        -3,
+        "P",
+        "ADT",
+        "ART",
+        "BRT",
+        "CLST",
+        "FKST",
+        "GFT",
+        "HAA",
+        "PMST",
+        "PYST",
+        "SRT",
+        "UYT",
+        "WGT",
+    ],
+    [-2, "O", "BRST", "FNT", "PMDT", "UYST", "WGST"],
+    [-1, "N", "AZOT", "CVT", "EGT"],
+    [0, "Z", "EGST", "GMT", "UTC", "WET", "WT"],
+    [1, "A", "CET", "DFT", "WAT", "WEDT", "WEST"],
+    [2, "B", "CAT", "CEDT", "CEST", "EET", "SAST", "WAST"],
+    [3, "C", "EAT", "EEDT", "EEST", "IDT", "MSK"],
+    [4, "D", "AMT", "AZT", "GET", "GST", "KUYT", "MSD", "MUT", "RET", "SAMT", "SCT"],
+    [
+        5,
+        "E",
+        "AMST",
+        "AQTT",
+        "AZST",
+        "HMT",
+        "MAWT",
+        "MVT",
+        "PKT",
+        "TFT",
+        "TJT",
+        "TMT",
+        "UZT",
+        "YEKT",
+    ],
+    [6, "F", "ALMT", "BIOT", "BTT", "IOT", "KGT", "NOVT", "OMST", "YEKST"],
+    [7, "G", "CXT", "DAVT", "HOVT", "ICT", "KRAT", "NOVST", "OMSST", "THA", "WIB"],
+    [
+        8,
+        "H",
+        "ACT",
+        "AWST",
+        "BDT",
+        "BNT",
+        "CAST",
+        "HKT",
+        "IRKT",
+        "KRAST",
+        "MYT",
+        "PHT",
+        "SGT",
+        "ULAT",
+        "WITA",
+        "WST",
+    ],
+    [9, "I", "AWDT", "IRKST", "JST", "KST", "PWT", "TLT", "WDT", "WIT", "YAKT"],
+    [10, "K", "AEST", "ChST", "PGT", "VLAT", "YAKST", "YAPT"],
+    [11, "L", "AEDT", "LHDT", "MAGT", "NCT", "PONT", "SBT", "VLAST", "VUT"],
+    [
+        12,
+        "M",
+        "ANAST",
+        "ANAT",
+        "FJT",
+        "GILT",
+        "MAGST",
+        "MHT",
+        "NZST",
+        "PETST",
+        "PETT",
+        "TVT",
+        "WFT",
+    ],
+    [13, "FJST", "NZDT"],
+    [11.5, "NFT"],
+    [10.5, "ACDT", "LHST"],
+    [9.5, "ACST"],
+    [6.5, "CCT", "MMT"],
+    [5.75, "NPT"],
+    [5.5, "SLT"],
+    [4.5, "AFT", "IRDT"],
+    [3.5, "IRST"],
+    [-2.5, "HAT", "NDT"],
+    [-3.5, "HNT", "NST", "NT"],
+    [-4.5, "HLV", "VET"],
+    [-9.5, "MART", "MIT"],
 ]
 TZ_ABBREV_OFFSET = {}
 for row in TZ_OFFSET_ABBREV:
@@ -84,27 +167,45 @@ for row in TZ_OFFSET_ABBREV:
 # FIXME: autogenerate this from pytz.timezone(iso_tz_name).tzname(datetime.datetime())
 #         or [pytz.timezone(tz)._tzinfos.keys() for tz in pytz.all_timezones if hasattr(pytz.timezone(tz), '_tzinfos')]
 TZ_ABBREV_INFO = {
-    'AKST': ('US/Alaska', -10), 'AKDT': ('US/Alaska', -9), 'AKT': ('US/Alaska', -10),  # noqa
-    'HAST': ('US/Hawaii', -9), 'HADT': ('US/Hawaii', -8), 'HAT': ('US/Hawaii', -9),  # noqa
-    'PST': ('US/Pacific', -8), 'PDT': ('US/Pacific', -7), 'PT': ('US/Pacific', -8),  # noqa
-    'MST': ('US/Mountain', -7), 'MDT': ('US/Mountain', -6), 'MT': ('US/Mountain', -7),  # noqa
-    'CST': ('US/Central', -6), 'CDT': ('US/Central', -5), 'CT': ('US/Central', -6),  # noqa
-    'EST': ('US/Eastern', -5), 'EDT': ('US/Eastern', -4), 'ET': ('US/Eastern', -5),  # noqa
-    'AST': ('US/Atlantic', -4), 'ADT': ('US/Atlantic', -3), 'AT': ('US/Atlantic', -4),  # noqa
-    'GMT': ('UTC', 0),
+    "AKST": ("US/Alaska", -10),
+    "AKDT": ("US/Alaska", -9),
+    "AKT": ("US/Alaska", -10),  # noqa
+    "HAST": ("US/Hawaii", -9),
+    "HADT": ("US/Hawaii", -8),
+    "HAT": ("US/Hawaii", -9),  # noqa
+    "PST": ("US/Pacific", -8),
+    "PDT": ("US/Pacific", -7),
+    "PT": ("US/Pacific", -8),  # noqa
+    "MST": ("US/Mountain", -7),
+    "MDT": ("US/Mountain", -6),
+    "MT": ("US/Mountain", -7),  # noqa
+    "CST": ("US/Central", -6),
+    "CDT": ("US/Central", -5),
+    "CT": ("US/Central", -6),  # noqa
+    "EST": ("US/Eastern", -5),
+    "EDT": ("US/Eastern", -4),
+    "ET": ("US/Eastern", -5),  # noqa
+    "AST": ("US/Atlantic", -4),
+    "ADT": ("US/Atlantic", -3),
+    "AT": ("US/Atlantic", -4),  # noqa
+    "GMT": ("UTC", 0),
 }
-TZ_ABBREV_OFFSET = dict(((abbrev, info[1]) for abbrev, info in viewitems(TZ_ABBREV_INFO)))
+TZ_ABBREV_OFFSET = dict(
+    ((abbrev, info[1]) for abbrev, info in viewitems(TZ_ABBREV_INFO))
+)
 TZ_ABBREV_NAME = dict(((abbrev, info[0]) for abbrev, info in viewitems(TZ_ABBREV_INFO)))
 
 
-np = pd.np
+import numpy as np
 
 
 def parse_time(timestr):
     dt = parse_date(timestr)
-    if dt.date() == datetime.datetime.today().date() and re.match('^\s*\d+\:\d+.*', timestr):
+    if dt.date() == datetime.datetime.today().date() and re.match(
+        "^\s*\d+\:\d+.*", timestr
+    ):
         return dt.time()
-    raise ValueError('Unknown string format.')
+    raise ValueError("Unknown string format.")
 
 
 def make_date(dt, date_parser=parse_date):
@@ -158,8 +259,10 @@ def make_datetime(dt, date_parser=parse_date):
     >>> make_datetime(['1970-10-31', '1970-12-25'])  # doctest: +NORMALIZE_WHITESPACE
     [datetime.datetime(1970, 10, 31, 0, 0), datetime.datetime(1970, 12, 25, 0, 0)]
     """
-    if (isinstance(dt, (datetime.datetime, datetime.date, datetime.time, pd.Timestamp, np.datetime64)) or
-            dt in (float('nan'), float('inf'), float('-inf'), None, '')):
+    if isinstance(
+        dt,
+        (datetime.datetime, datetime.date, datetime.time, pd.Timestamp, np.datetime64),
+    ) or dt in (float("nan"), float("inf"), float("-inf"), None, ""):
         return dt
     if isinstance(dt, (float, int)):
         return datetime_from_ordinal_float(dt)
@@ -173,7 +276,7 @@ def make_datetime(dt, date_parser=parse_date):
         try:
             return date_parser(dt)
         except ValueError:
-            print('Unable to make_datetime({})'.format(dt))
+            print("Unable to make_datetime({})".format(dt))
             raise
     try:
         return datetime.datetime(*dt.timetuple()[:7])
@@ -218,7 +321,7 @@ def make_time(dt, date_parser=parse_date):
             dt = date_parser(dt)
         except (ValueError, AttributeError):
             print_exc()
-            print('Unable to parse {}'.format(repr(dt)))
+            print("Unable to parse {}".format(repr(dt)))
     try:
         dt = dt.timetuple()[3:6]
     except AttributeError:
@@ -243,7 +346,7 @@ def quantize_datetime(dt, resolution=None):
     """
     # FIXME: this automatically truncates off microseconds just because timtuple() only goes out to sec
     resolution = int(resolution or 6)
-    if hasattr(dt, 'timetuple'):
+    if hasattr(dt, "timetuple"):
         dt = dt.timetuple()  # strips timezone info
 
     if isinstance(dt, time.struct_time):
@@ -254,7 +357,11 @@ def quantize_datetime(dt, resolution=None):
         dt[5] = int(dt[5])
         return datetime.datetime(*(dt[:resolution] + [1] * max(3 - resolution, 0)))
 
-    if isinstance(dt, tuple) and len(dt) <= 9 and all(isinstance(val, (float, int)) for val in dt):
+    if (
+        isinstance(dt, tuple)
+        and len(dt) <= 9
+        and all(isinstance(val, (float, int)) for val in dt)
+    ):
         dt = list(dt) + [0] * (max(6 - len(dt), 0))
         # if the 6th element of the tuple looks like a float set of seconds need to add microseconds
         if len(dt) == 6 and isinstance(dt[5], float):
@@ -269,9 +376,9 @@ def quantize_datetime(dt, resolution=None):
 def is_valid_american_date_string(s, require_year=True):
     if not isinstance(s, basestring):
         return False
-    if require_year and len(s.split('/')) != 3:
+    if require_year and len(s.split("/")) != 3:
         return False
-    return bool(1 <= int(s.split('/')[0]) <= 12 and 1 <= int(s.split('/')[1]) <= 31)
+    return bool(1 <= int(s.split("/")[0]) <= 12 and 1 <= int(s.split("/")[1]) <= 31)
 
 
 def ordinal_float(dt):
@@ -285,14 +392,21 @@ def ordinal_float(dt):
     34.1702083334143...
     """
     try:
-        return dt.toordinal() + ((((dt.microsecond / 1000000.) + dt.second) / 60. + dt.minute) / 60 + dt.hour) / 24.
+        return (
+            dt.toordinal()
+            + (
+                (((dt.microsecond / 1000000.0) + dt.second) / 60.0 + dt.minute) / 60
+                + dt.hour
+            )
+            / 24.0
+        )
     except AttributeError:
         try:
             return ordinal_float(make_datetime(dt))
         except ValueError:
             pass
     dt = list(make_datetime(val) for val in dt)
-    assert(all(isinstance(val, datetime.datetime) for val in dt))
+    assert all(isinstance(val, datetime.datetime) for val in dt)
     return [ordinal_float(val) for val in dt]
 
 
@@ -307,16 +421,18 @@ def datetime_from_ordinal_float(days):
     True
     """
     if isinstance(days, (float, int)):
-        if np.isnan(days) or days in set((float('nan'), float('inf'), float('-inf'))):
+        if np.isnan(days) or days in set((float("nan"), float("inf"), float("-inf"))):
             return days
         dt = datetime.datetime.fromordinal(int(days))
-        seconds = (days - int(days)) * 3600. * 24.
+        seconds = (days - int(days)) * 3600.0 * 24.0
         microseconds = (seconds - int(seconds)) * 1000000
-        return dt + datetime.timedelta(days=0, seconds=int(seconds), microseconds=int(round(microseconds)))
+        return dt + datetime.timedelta(
+            days=0, seconds=int(seconds), microseconds=int(round(microseconds))
+        )
     return [datetime_from_ordinal_float(d) for d in days]
 
 
-def timetag_str(dt=None, sep='-', filler='0', resolution=6):
+def timetag_str(dt=None, sep="-", filler="0", resolution=6):
     """Generate a date-time tag suitable for appending to a file name.
 
     >>> timetag_str(resolution=3) == '-'.join('{0:02d}'.format(i) for i in
@@ -331,12 +447,14 @@ def timetag_str(dt=None, sep='-', filler='0', resolution=6):
     """
     resolution = int(resolution or 6)
     if sep in (None, False):
-        sep = ''
+        sep = ""
     sep = str(sep)
     dt = datetime.datetime.now() if dt is None else dt
     # FIXME: don't use timetuple which truncates microseconds
-    return sep.join(('{0:' + filler + ('2' if filler else '') + 'd}').format(i)
-                    for i in tuple(dt.timetuple()[:resolution]))
+    return sep.join(
+        ("{0:" + filler + ("2" if filler else "") + "d}").format(i)
+        for i in tuple(dt.timetuple()[:resolution])
+    )
 
 
 timestamp_str = make_timestamp = make_timetag = timetag_str
@@ -346,7 +464,7 @@ def days_since(dt, dt0=datetime.datetime(1970, 1, 1, 0, 0, 0)):
     return ordinal_float(dt) - ordinal_float(dt0)
 
 
-def make_tz_aware(dt, tz='UTC', is_dst=None):
+def make_tz_aware(dt, tz="UTC", is_dst=None):
     """Add timezone information to a datetime object, only if it is naive.
 
     >>> make_tz_aware(datetime.datetime(2001, 9, 8, 7, 6))
@@ -374,7 +492,9 @@ def make_tz_aware(dt, tz='UTC', is_dst=None):
     """
     # make sure dt is a datetime, time, or list of datetime/times
     dt = make_datetime(dt)
-    if not isinstance(dt, (list, datetime.datetime, datetime.date, datetime.time, pd.Timestamp)):
+    if not isinstance(
+        dt, (list, datetime.datetime, datetime.date, datetime.time, pd.Timestamp)
+    ):
         return dt
     # TODO: deal with sequence of timezones
     try:
@@ -384,7 +504,7 @@ def make_tz_aware(dt, tz='UTC', is_dst=None):
     try:
         tzstr = str(tz).strip().upper()
         if tzstr in TZ_ABBREV_NAME:
-            is_dst = is_dst or tzstr.endswith('DT')
+            is_dst = is_dst or tzstr.endswith("DT")
             tz = TZ_ABBREV_NAME.get(tzstr, tz)
     except (ValueError, AttributeError, TypeError):
         pass
@@ -435,44 +555,46 @@ def clean_wiki_datetime(dt, squelch=True):
     if isinstance(dt, datetime.datetime):
         return dt
     elif not isinstance(dt, basestring):
-        dt = ' '.join(dt)
+        dt = " ".join(dt)
     try:
         return make_tz_aware(parse_date(dt))
     except (AttributeError, ValueError):
         if not squelch:
             print("Failed to parse %r as a date" % dt)
-    dt = [s.strip() for s in dt.split(' ')]
+    dt = [s.strip() for s in dt.split(" ")]
     # get rid of any " at " or empty strings
-    dt = [s for s in dt if s and s.lower() != 'at']
+    dt = [s for s in dt if s and s.lower() != "at"]
 
     # deal with the absence of :'s in wikipedia datetime strings
 
     if rex.month_name.match(dt[0]) or rex.month_name.match(dt[1]):
         if len(dt) >= 5:
-            dt = dt[:-2] + [dt[-2].strip(':') + ':' + dt[-1].strip(':')]
-            return clean_wiki_datetime(' '.join(dt))
+            dt = dt[:-2] + [dt[-2].strip(":") + ":" + dt[-1].strip(":")]
+            return clean_wiki_datetime(" ".join(dt))
         elif len(dt) == 4 and (len(dt[3]) == 4 or len(dt[0]) == 4):
-            dt[:-1] + ['00']
-            return clean_wiki_datetime(' '.join(dt))
+            dt[:-1] + ["00"]
+            return clean_wiki_datetime(" ".join(dt))
     elif rex.month_name.match(dt[-2]) or rex.month_name.match(dt[-3]):
         if len(dt) >= 5:
-            dt = [dt[0].strip(':') + ':' + dt[1].strip(':')] + dt[2:]
-            return clean_wiki_datetime(' '.join(dt))
+            dt = [dt[0].strip(":") + ":" + dt[1].strip(":")] + dt[2:]
+            return clean_wiki_datetime(" ".join(dt))
         elif len(dt) == 4 and (len(dt[-1]) == 4 or len(dt[-3]) == 4):
-            dt = [dt[0], '00'] + dt[1:]
-            return clean_wiki_datetime(' '.join(dt))
+            dt = [dt[0], "00"] + dt[1:]
+            return clean_wiki_datetime(" ".join(dt))
 
     try:
-        return make_tz_aware(parse_date(' '.join(dt)))
+        return make_tz_aware(parse_date(" ".join(dt)))
     except Exception as e:
         if squelch:
             from traceback import format_exc
-            print(format_exc(e) +
-                  '\n^^^ Exception caught ^^^\nWARN: Failed to parse datetime string %r\n' +
-                  '      from list of strings %r' %
-                  (' '.join(dt), dt))
+
+            print(
+                format_exc(e)
+                + "\n^^^ Exception caught ^^^\nWARN: Failed to parse datetime string %r\n"
+                + "      from list of strings %r" % (" ".join(dt), dt)
+            )
             return dt
-        raise(e)
+        raise (e)
 
 
 def clip_datetime(dt, tz=DEFAULT_TZ, is_dst=None):
